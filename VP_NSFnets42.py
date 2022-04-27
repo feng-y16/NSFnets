@@ -2,15 +2,14 @@
 # time 5/27/2020
 
 import sys
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import numpy as np
 import time
 
 # set random seed
-
 np.random.seed(1234)
-
 tf.set_random_seed(1234)
+tf.compat.v1.disable_eager_execution()
 
 #############################################
 ###################VP NSFnet#################
@@ -108,14 +107,6 @@ class VPNSFnet:
                     tf.reduce_sum(tf.square(self.f_e_pred))
 
         # set optimizer
-        self.optimizer = tf.contrib.opt.ScipyOptimizerInterface(self.loss,
-                                                                method='L-BFGS-B',
-                                                                options={'maxiter': 50000,
-                                                                         'maxfun': 50000,
-                                                                         'maxcor': 50,
-                                                                         'maxls': 50,
-                                                                         'ftol': 1.0 * np.finfo(float).eps})
-
         self.optimizer_Adam = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op_Adam = self.optimizer_Adam.minimize(self.loss)
 
@@ -340,9 +331,9 @@ if __name__ == "__main__":
                      x_train, y_train, z_train, t_train, layers)
 
     model.train(1000, 150, 1e-3)
-    model.train(4000, 150, 1e-4)
-    model.train(1000, 150, 1e-5)
-    model.train(500, 150, 1e-6)
+    # model.train(4000, 150, 1e-4)
+    # model.train(1000, 150, 1e-5)
+    # model.train(500, 150, 1e-6)
 
     # # Test Data
     # x_star = (np.random.rand(100, 1) - 1 / 2) * 2

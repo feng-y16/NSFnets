@@ -2,16 +2,14 @@
 # time 5/12/2020
 
 import sys
-
-sys.path.append('PINNs-master/Utilities')
-
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import numpy as np
 import time
 
 # set random seed
 np.random.seed(1234)
 tf.set_random_seed(1234)
+tf.compat.v1.disable_eager_execution()
 
 #############################################
 ###################VP NSFnet#################
@@ -109,14 +107,6 @@ class VPNSFnet:
                     tf.reduce_mean(tf.square(self.f_e_pred))
 
         # set optimizer
-        self.optimizer = tf.contrib.opt.ScipyOptimizerInterface(self.loss,
-                                                                method='L-BFGS-B',
-                                                                options={'maxiter': 50000,
-                                                                         'maxfun': 50000,
-                                                                         'maxcor': 50,
-                                                                         'maxls': 50,
-                                                                         'ftol': 1.0 * np.finfo(float).eps})
-
         self.optimizer_Adam = tf.train.AdamOptimizer(self.learning_rate)
         self.train_op_Adam = self.optimizer_Adam.minimize(self.loss)
 
@@ -295,12 +285,12 @@ if __name__ == "__main__":
     layers = [4, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 4]
 
     # Load Data
-    train_ini1 = np.load('train_ini2.npy')
-    train_iniv1 = np.load('train_iniv2.npy')
-    train_inip1 = np.load('train_inip2.npy')
-    train_xb1 = np.load('train_xb2.npy')
-    train_vb1 = np.load('train_vb2.npy')
-    train_pb1 = np.load('train_pb2.npy')
+    train_ini1 = np.load('npy data/train_ini2.npy')
+    train_iniv1 = np.load('npy data/train_iniv2.npy')
+    train_inip1 = np.load('npy data/train_inip2.npy')
+    train_xb1 = np.load('npy data/train_xb2.npy')
+    train_vb1 = np.load('npy data/train_vb2.npy')
+    train_pb1 = np.load('npy data/train_pb2.npy')
 
     xnode = np.linspace(12.47, 12.66, 191)
     ynode = np.linspace(-1, -0.0031, 998)
@@ -340,9 +330,9 @@ if __name__ == "__main__":
                      x_train, y_train, z_train, t_train, layers)
 
     model.train(250, 150, 1e-3)
-    model.train(4250, 150, 1e-4)
-    model.train(500, 150, 1e-5)
-    model.train(500, 150, 1e-6)
+    # model.train(4250, 150, 1e-4)
+    # model.train(500, 150, 1e-5)
+    # model.train(500, 150, 1e-6)
 
     # # Test Data
     # x_star = (np.random.rand(100, 1) - 1 / 2) * 2
